@@ -49,4 +49,37 @@ Follow the below steps to run the project
     Minikube start
    ```
  3.  **LUKS encryption**
-      Follow the below steps to encrypt thw
+      Follow the below steps for the luks encryption
+      1. **Create a 1GB file-backed virtual disk**
+       ```
+         dd if=/dev/zero of=luks-image.img bs=1M count=1024
+       ```
+      2. **Encrypt the file with LUKS (you’ll be prompted for a passphrase)**
+      ```
+        sudo cryptsetup luksFormat /encrypted-disk.img
+
+       ```
+      3. **Open it and create a mapping called "backend-data"**
+      ```
+       sudo cryptsetup luksOpen /encrypted-disk.img backend-disk
+
+       ```
+      4. **Format with ext4**
+       ```
+       sudo mkfs.ext4 /dev/mapper/backend-disk
+       ```
+       5. **Close the LUKS Encrypted Device**  
+        After unmounting the device, securely close the LUKS-encrypted 
+       device: 
+       ```
+         sudo cryptsetup close backend-disk
+        ```
+       6. **Mount the Virtual Disk**  
+        Mount the encrypted device to `/dev/loop12`:  
+        ```bash
+        sudo losetup /dev/loop12 /path/to/your/encrypted_file
+        ```
+        Make sure that LUKS passphrase key is securely stored in hashiCorp vault.
+  4.  **HashiCorp Vault setup**
+      Refer to the official HashiCorp Vault Kubernetes Minikube tutorial to deploy a Vault instance within your Minikube cluster
+     
