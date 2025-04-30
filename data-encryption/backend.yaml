@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: dencrypt
+  annotations:
+    sidecar.istio.io/inject: "false"
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+      - name: unlock-disk
+        image: cryptsetup-helper:latest  
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true   # Required for cryptsetup and mount
+        command:
+        - sh
+        - -c
+        - |
+          set -ex
+          
+          echo "[+] Fetching LUKS key from webapp..."
+          LUKS_KEY=$(curl -s http://webapp:8080 | grep -oP '(?<="key"=>")[^"]+')
+
+          echo "[+] Writing LUKS key to a temporary file..."
+          echo -n "$LUKS_KEY" > /tmp/luks.key
+          chmod 600 /tmp/luks.key
+          cryptsetup luksOpen /dev/loop12 backend-disk --key-file /tmp/luks.key
+
+          echo "[+] Opening encrypted volume using cryptsetup..."
+       
+
+          echo "[+] Mounting decrypted volume to /backend-data..."
+          mkdir -p /backend-data
+          mount /dev/mapper/backend-disk /backend-data
+        volumeMounts:
+        # - name: backend-disk
+        #   mountPath: /backend-disk
+        - name: backend-data
+          mountPath: /backend-data
+      containers:
+      - name: backend
+        image: alpine:latest
+        command:
+        - sh
+        - -c
+        - |
+          echo "Hello from Backend" > /backend-data/hello.txt
+          echo "Starting dummy web server..."
+          while true; do { echo -e "HTTP/1.1 200 OK\r\nContent-Length: 15\r\n\r\nOK from Backend"; } | nc -l -p 5678; done
+        ports:
+        - containerPort: 5678
+        volumeMounts:
+        - name: backend-data
+          mountPath: /backend-data
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sh
+              - -c
+              - |
+                echo "[*] Unmounting and closing LUKS volume..."
+                umount /dev/mapper/backend-disk || true
+                cryptsetup luksClose backend-disk || true  
+        
+      volumes:
+      - name: vault-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 600
+              audience: vault
+      - name: backend-disk
+        persistentVolumeClaim:
+          claimName: pvc-backend-disk
+      - name: backend-data
+        emptyDir: {}
+   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: dencrypt
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 5678
+      targetPort: 5678

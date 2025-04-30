@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: dencrypt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: curlimages/curl
+        command: ["/bin/sh", "-c", "while true; do curl http://backend:5678; sleep 5; done"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: dencrypt
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
