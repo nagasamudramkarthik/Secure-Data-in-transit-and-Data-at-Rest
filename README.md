@@ -82,4 +82,23 @@ Follow the below steps to run the project
         Make sure that LUKS passphrase key is securely stored in hashiCorp vault.
   4.  **HashiCorp Vault setup**
       Refer to the official HashiCorp Vault Kubernetes Minikube tutorial to deploy a Vault instance within your Minikube cluster
+
+  5. **Project setup**
+     1. **first create namespace in which we run the whole project**
+     ```
+     kubectl create namespace dencrypt
+     ```
+     2. **Apply the peer-authentication.yaml and destination-rule.yaml to the namespace for ensuring data-in-transit encryption  using istio**
+        You can apply yaml files to namespace using the below command
+        ```
+        kubectl apply -f <filename>.yaml -n <namespace>
+        ```
+     3. **Apply the frontend.yaml and backend.yaml"
+         To view the pods that are running in a namespace enter the below command
+        ```
+        kubectl get pods -n dencrypt
+        ```
+        
+    ![WhatsApp Image 2025-05-01 at 00 49 10_b8ca7f7e](https://github.com/user-attachments/assets/f0a66595-4ec6-43ea-aac0-d261b14aca5e)
+
      
