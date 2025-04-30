@@ -17,7 +17,7 @@ This repository showcases how to secure both data at rest and data in transit wi
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
 ![Istio](https://img.shields.io/badge/Istio-466BB0?style=for-the-badge&logo=istio&logoColor=white)
 ![HashiCorp Vault](https://img.shields.io/badge/HashiCorp%20Vault-000000?style=for-the-badge&logo=vault&logoColor=white)
-
+![cryptsetup](https://img.shields.io/badge/cryptsetup-efefef?style=for-the-badge&logo=linux&logoColor=black&labelColor=gray)
 ### Requirements
 
 To set up and run this project, make sure the following tools and platforms are installed on a Linux-based operating system (preferably Ubuntu):
@@ -48,4 +48,5 @@ Follow the below steps to run the project
    ```
     Minikube start
    ```
- 
+ 3.  **LUKS encryption**
+      Follow the below steps to encrypt thw
