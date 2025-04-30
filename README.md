@@ -94,14 +94,14 @@ Follow the below steps to run the project
         ```
         kubectl apply -f <filename>.yaml -n <namespace>
         ```
-     3. **Apply the frontend.yaml, backend.yaml, pv.yaml, pvc.yaml"
+     3. **Apply the frontend.yaml, backend.yaml, pv.yaml, pvc.yaml**
          To view the pods that are running in a namespace enter the below command
         ```
         kubectl get pods -n dencrypt
         ```
-     4. **Apply webapp.yaml file"
+     4. **Apply webapp.yaml file**
           this webapp is a pod that fetches the key from vault when ever a request is made to it and also make sure vault-0 is running in the namespace. backend pod will make request to  fetch key while decrypting the disk
-     5. "Execute frontend pod"
+     5. **Execute frontend pod**
          You can execute the frontend pod using the below command
         ```
           kubectl exec -it <frontend-pod-name> -n dencrypt -- sh
