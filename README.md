@@ -9,7 +9,7 @@
 
 ### Project Overview
 
-This repository showcases how to secure both data at rest and data in transit within a Kubernetes environment. It implements secure communication between a frontend pod and a backend pod using mutual TLS (mTLS) provided by Istio. The backend pod, running MongoDB, uses a LUKS-encrypted persistent volume, which is automatically decrypted using a passphrase securely retrieved from HashiCorp Vault.
+This repository showcases how to secure both data at rest and data in transit within a Kubernetes environment. It implements secure communication between a frontend pod and a backend pod using mutual TLS (mTLS) provided by Istio. The backend pod  uses a LUKS-encrypted persistent volume, which is automatically decrypted using a passphrase securely retrieved from HashiCorp Vault.
 
 ### Tools Used
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
