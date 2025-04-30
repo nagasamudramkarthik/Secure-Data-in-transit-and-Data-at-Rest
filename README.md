@@ -81,7 +81,8 @@ Follow the below steps to run the project
         ```
         Make sure that LUKS passphrase key is securely stored in hashiCorp vault.
   4.  **HashiCorp Vault setup**
-      Refer to the official HashiCorp Vault Kubernetes Minikube tutorial to deploy a Vault instance within your Minikube cluster
+      Refer to the official HashiCorp Vault Kubernetes Minikube tutorial to deploy a Vault instance within your Minikube cluster and makesure to install it in a namespace 
+     called dencrypt
 
   5. **Project setup**
      1. **first create namespace in which we run the whole project**
@@ -93,12 +94,24 @@ Follow the below steps to run the project
         ```
         kubectl apply -f <filename>.yaml -n <namespace>
         ```
-     3. **Apply the frontend.yaml and backend.yaml"
+     3. **Apply the frontend.yaml, backend.yaml, pv.yaml, pvc.yaml"
          To view the pods that are running in a namespace enter the below command
         ```
         kubectl get pods -n dencrypt
         ```
-        
-    ![WhatsApp Image 2025-05-01 at 00 49 10_b8ca7f7e](https://github.com/user-attachments/assets/f0a66595-4ec6-43ea-aac0-d261b14aca5e)
-
+     4. **Apply webapp.yaml file"
+          this webapp is a pod that fetches the key from vault when ever a request is made to it and also make sure vault-0 is running in the namespace. backend pod will make request to  fetch key while decrypting the disk
+     5. "Execute frontend pod"
+         You can execute the frontend pod using the below command
+        ```
+          kubectl exec -it <frontend-pod-name> -n dencrypt -- sh
+        ```
+        in the bash script of the pod make a request to backendpod
+        ```
+           $ curl http://backend:5678
+        ```
+        this is will execute the backend and it write data to the decrypted disk
+         
+     
+    
      
